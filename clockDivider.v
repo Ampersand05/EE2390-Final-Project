@@ -17,7 +17,7 @@ module clock_divider_1ms(
         end
         else
         begin
-            if(count == 24'd99)
+            if(count == 24'd99999)
             begin
                 count <= 0;
                 tick_1ms <= 1;
