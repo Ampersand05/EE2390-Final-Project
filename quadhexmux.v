@@ -1,7 +1,7 @@
 // Updated mux for our project
 module mux(
     input [3:0] A, B, C, D, 
-    input clk, rst,
+    input clk,
     output reg [3:0] segmentNum,
     output reg [3:0] an
 );
