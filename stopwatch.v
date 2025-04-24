@@ -4,7 +4,7 @@ module stopwatch(
 );
 
     wire mins, secs_lsd, secs_msd, ms;
-    wire seg1, seg2, seg3, seg4;
+    wire segNum;
 
     stopwatch_top uut (
         .rst(rst),
