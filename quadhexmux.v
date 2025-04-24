@@ -1,23 +1,27 @@
-// quadhexmux.v for EE 2390 Lab #05
-module quadhexmux(Muxd,Anode,A,B,C,D,Sel);
-   output [3:0] Muxd;
-   output [0:3] Anode;
-   input  [3:0] A, B, C, D;
-   input  [0:3] Sel;
-   
-   reg    [3:0] Muxd;
+// Updated mux for our project
+module mux(
+    input [3:0] A, B, C, D, 
+    input clk, rst,
+    output reg [3:0] segmentNum,
+    output reg [3:0] an
+);
+    reg [15:0] divider;
+    reg [1:0] digit_select;
 
-   assign Anode = ~Sel; // Provides active low drive on anode transistors.
+    always @ (posedge clk)
+    begin
+        divider <= divider + 1;
+        if(divider == 0)
+            digit_select <= digit_select + 1;
+    end
 
-   always @(A,B,C,D,Sel)
-   begin
-       case(Sel)
-           4'b0001: Muxd = D;
-           4'b0010: Muxd = C;
-           4'b0100: Muxd = B;
-           4'b1000: Muxd = A;
-           default: Muxd = 4'b0000; // Note what happens if more than one!
-       endcase
-   end
-
+    always @ (*)
+    begin
+        case(digit_select)
+            2'b00: an = 4'b1110; segmentNum = D;
+            2'b01: an = 4'b1101; segmentNum = C;
+            2'b10: an = 4'b1011; segmentNum = B;
+            2'b11: an = 4'b0111; segmentNum = A;
+        endcase
+    end
 endmodule
