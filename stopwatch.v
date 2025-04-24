@@ -19,20 +19,18 @@ module stopwatch(
         .ms_msd(ms)
     );
 
-    sevenseghexdecoder m(
-        .Seg(seg1),
-        .BinVal(mins)
+    mux m(
+        .A(mins),
+        .B(secs_msd),
+        .C(secs_lsd),
+        .D(ms),
+        .clk(clk),
+        .segmentNum(segNum),
+        .an(an)
     );
-    sevenseghexdecoder sM(
-        .Seg(seg2),
-        .BinVal(secs_msd)
-    );
-    sevenseghexdecoder sL(
-        .Seg(seg3),
-        .BinVal(secs_lsd)
-    );
-    sevenseghexdecoder mils(
-        .seg(seg4),
-        .BinVal(ms)
+
+    sevenseghexdecoder segOut(
+        .BinVal(segNum),
+        .seg(seg_out)
     );
 endmodule
