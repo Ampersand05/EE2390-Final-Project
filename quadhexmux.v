@@ -35,7 +35,7 @@ module mux(
         if(rst)
         begin
             divider <= 16'b0;
-            dig_select <= 2'b00;
+            digit_select <= 2'b00;
         end
         else
         // This essentially increments the clock pulses into 1KHz clock
@@ -54,10 +54,10 @@ module mux(
             // Display and hold the current time
             begin
                 case(digit_select)
-                    2'b00: an <= 4'b1110; segmentNum <= H;
-                    2'b01: an <= 4'b1101; segmentNum <= G;
-                    2'b10: an <= 4'b1011; segmentNum <= F;
-                    2'b11: an <= 4'b0111; segmentNum <= E;
+                    2'b00: begin an <= 4'b1110; segmentNum <= H; end
+                    2'b01: begin an <= 4'b1101; segmentNum <= G; end
+                    2'b10: begin an <= 4'b1011; segmentNum <= F; end
+                    2'b11: begin an <= 4'b0111; segmentNum <= E; end
                 endcase
             end
         else
@@ -65,10 +65,10 @@ module mux(
         // the running time.
             begin
                 case(digit_select)
-                    2'b00: an <= 4'b1110; segmentNum <= D;
-                    2'b01: an <= 4'b1101; segmentNum <= C;
-                    2'b10: an <= 4'b1011; segmentNum <= B;
-                    2'b11: an <= 4'b0111; segmentNum <= A;
+                    2'b00: begin an <= 4'b1110; segmentNum <= D; end
+                    2'b01: begin an <= 4'b1101; segmentNum <= C; end
+                    2'b10: begin an <= 4'b1011; segmentNum <= B; end
+                    2'b11: begin an <= 4'b0111; segmentNum <= A; end
                 endcase
             end
     end
