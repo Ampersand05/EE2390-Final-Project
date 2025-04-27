@@ -6,8 +6,9 @@ module stopwatch(
     // These are our wires to connect the outputs from the counters
     wire [3:0] mins, secs_lsd, secs_msd, ms;
     wire [3:0] lap_ct_minutes, lap_ct_seconds_lsd, lap_ct_seconds_msd, lap_ct_ms;
-    wire [3:0] segNum, seg_out; // These are used to transfrom the output from the mux into a 
+    wire [3:0] segNum; // These are used to transfrom the output from the mux into a 
                                 // raw output signal
+    wire [6:0] seg_out;
 
     wire start_press; // This is a wire used to connect the stopwatch and the mux
 
@@ -28,8 +29,8 @@ module stopwatch(
         .lap_ct_secondsmsd(lap_ct_seconds_msd),
         .lap_ct_ms(lap_ct_ms),
         .lap(lap),
-        .start_press(start_press),
-        .run(run)
+        .start_catch(start_press),
+        .run_catch(run)
     );
 
     // Initializng the multiplexer
