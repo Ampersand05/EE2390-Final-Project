@@ -1,5 +1,6 @@
 module stopwatch_top(
     input rst, clk, dir, clr, start, stop, lap, // Similar inputs to the other modules
+    output run_catch, start_catch,
     output [3:0] minutes, // Current minutes
     output [3:0] seconds_msd, // Current seconds most significant digits
     output [3:0] seconds_lsd, // Current seconds least significant digit
@@ -30,7 +31,7 @@ module stopwatch_top(
     end
 
     // Stores the start/stop button press
-    output wire start_press = start_sync[0] & ~start_sync[1];
+    wire start_press = start_sync[0] & ~start_sync[1];
     wire stop_press = stop_sync[0] & ~stop_sync[1];
 
     // This always block determines whether to run the counters or not
@@ -53,6 +54,9 @@ module stopwatch_top(
             run <= 1'b0;
         end
     end
+
+    assign run_catch = run;
+    assign start_catch = start_press;
 
     // This is the same synchronizer from the mux
     reg [1:0] lap_sync;
@@ -88,7 +92,7 @@ module stopwatch_top(
         .upen(upen1),
         .max_val(4'd9),
         .lap_ct(lap_ct_ms),
-        .lap(lap_press)
+        .lap_press(lap_press)
     );
     time_counter_1dig seconds_lsd_counter(
         .en(msden1_reg),
@@ -101,7 +105,7 @@ module stopwatch_top(
         .upen(upen2),
         .max_val(4'd9),
         .lap_ct(lap_ctsecondslsd),
-        .lap(lap_press)
+        .lap_press(lap_press)
     );
     time_counter_1dig seconds_msd_counter(
         .en(msden2_reg),
@@ -114,7 +118,7 @@ module stopwatch_top(
         .upen(upen3),
         .max_val(4'd5),
         .lap_ct(lap_ct_secondsmsd),
-        .lap(lap_press)
+        .lap_press(lap_press)
     );
     time_counter_1dig minutes_counter(
         .en(msden3_reg),
@@ -127,7 +131,7 @@ module stopwatch_top(
         .upen(upen4),
         .max_val(4'd9),
         .lap_ct(lap_ctminutes),
-        .lap(lap_press)
+        .lap_press(lap_press)
     );
 
     // This is our overflow logic
