@@ -18,12 +18,20 @@ module time_counter_1dig(
     end
 
     // Always block to control the functionality of the lap
-    always@(posedge clk or posedge rst)
+    reg lap_press_prev;
+    always @ (posedge clk or posedge rst)
     begin
         if(rst)
+        begin
             lap_ct <= 4'b0000;
-        else if (lap_press)
-            lap_ct <= ct;
+            lap_press_prev <= 1'b0;
+        end
+        else
+        begin
+            lap_press_prev <= lap_press;
+            if (lap_press && !lap_press_prev)
+                lap_ct <= ct;
+        end
     end
     
     // Combinational logic to assign the next state
