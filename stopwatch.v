@@ -10,8 +10,10 @@ module stopwatch(
                                 // raw output signal
     wire [6:0] seg_out;
 
-    wire start_press; // This is a wire used to connect the stopwatch and the mux
+    wire start_press, lap_press_ms; // This is a wire used to connect the stopwatch and the mux
 
+    wire run;
+    
     // Initializing the stopwatch top module
     stopwatch_top uut (
         .rst(rst),
@@ -30,7 +32,8 @@ module stopwatch(
         .lap_ct_ms(lap_ct_ms),
         .lap(lap),
         .start_catch(start_press),
-        .run_catch(run)
+        .run_catch(run),
+        .lap_press_ms_out(lap_press_ms)
     );
 
     // Initializng the multiplexer
@@ -46,7 +49,7 @@ module stopwatch(
         .clk(clk),
         .segmentNum(segNum),
         .an(an),
-        .lap(lap),
+        .lap_press(lap_press_ms),
         .start_press(start_press),
         .rst(rst),
         .run(run)
