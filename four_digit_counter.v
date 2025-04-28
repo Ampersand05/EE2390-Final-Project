@@ -1,6 +1,6 @@
 module stopwatch_top(
     input rst, clk, dir, clr, start, stop, lap, // Similar inputs to the other modules
-    output run_catch, start_catch,
+    output run_catch, start_catch, lap_press_ms_out,
     output [3:0] minutes, // Current minutes
     output [3:0] seconds_msd, // Current seconds most significant digits
     output [3:0] seconds_lsd, // Current seconds least significant digit
@@ -59,17 +59,19 @@ module stopwatch_top(
     assign start_catch = start_press;
 
     // This is the same synchronizer from the mux
-    reg [1:0] lap_sync;
+    reg [1:0] lap_sync_ms;
+    wire lap_press_ms;
     always @ (posedge clk or posedge rst)
     begin
         if (rst) 
-            lap_sync <= 2'b00;
+            lap_sync_ms <= 2'b00;
         else
-            lap_sync <= {lap_sync[0], lap};
+            lap_sync_ms <= {lap_sync_ms[0], lap};
     end
 
     // Same logic from the mux
-    wire lap_press = lap_sync[0] & ~lap_sync[1];
+    assign lap_press_ms = lap_sync_ms[0] & ~lap_sync_ms[1];
+    assign lap_press_ms_out = lap_press_ms;
 
     wire start_repress = run & start_press;
 
@@ -92,7 +94,7 @@ module stopwatch_top(
         .upen(upen1),
         .max_val(4'd9),
         .lap_ct(lap_ct_ms),
-        .lap_press(lap_press)
+        .lap_press(lap_press_ms)
     );
     time_counter_1dig seconds_lsd_counter(
         .en(msden1_reg),
@@ -105,7 +107,7 @@ module stopwatch_top(
         .upen(upen2),
         .max_val(4'd9),
         .lap_ct(lap_ctsecondslsd),
-        .lap_press(lap_press)
+        .lap_press(lap_press_ms)
     );
     time_counter_1dig seconds_msd_counter(
         .en(msden2_reg),
@@ -118,7 +120,7 @@ module stopwatch_top(
         .upen(upen3),
         .max_val(4'd5),
         .lap_ct(lap_ct_secondsmsd),
-        .lap_press(lap_press)
+        .lap_press(lap_press_ms)
     );
     time_counter_1dig minutes_counter(
         .en(msden3_reg),
@@ -131,7 +133,7 @@ module stopwatch_top(
         .upen(upen4),
         .max_val(4'd9),
         .lap_ct(lap_ctminutes),
-        .lap_press(lap_press)
+        .lap_press(lap_press_ms)
     );
 
     // This is our overflow logic
@@ -167,7 +169,7 @@ module stopwatch_top(
     // This is our active enable signal, it trickles down starting at the
     // first counter, deactivates immediately when it hits the max or min or the kill activates
     // and if it is running
-    assign active_en = run && !(kill || at_max || at_min);
+    assign active_en = run && !kill;
 endmodule
 
 
