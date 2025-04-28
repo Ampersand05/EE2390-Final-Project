@@ -2,7 +2,7 @@
 module mux(
     input [3:0] A, B, C, D, // Inputs for the current counter state ie. the running time
     input [3:0] E, F, G, H, // Inputs for the captured lap time
-    input clk, rst, lap, start_press, run, // Inputs for the clock, reset, lap button press, and the start press
+    input clk, rst, start_press, run, lap_press, // Inputs for the clock, reset, lap button press, and the start press
     output reg [3:0] segmentNum, // This output is for the binary value to go into the hex decoder
     output reg [3:0] an // This is the value of the display to be turned on
 );
@@ -16,18 +16,6 @@ module mux(
 
     wire start_repress = run && start_press; // This just checks if the start button is 
                                             // pressed again while the clock is running
-
-    reg [1:0] lap_sync; // This is a register to store if the lap button is pressed
-    always @ (posedge clk or posedge rst)
-    begin
-        if (rst) // Asynchronous master reset
-            lap_sync <= 2'b00;
-        else
-            lap_sync <= {lap_sync[0], lap}; // This is a shift register to store
-                                            // if lap is pressed
-    end
-
-    wire lap_press = lap_sync[0] & ~lap_sync[1]; // This just holds the value if lap_sync is one or zero
 
     always @ (posedge clk or posedge rst)
     begin
@@ -47,10 +35,21 @@ module mux(
         end
     end
 
+    reg lap_active;
+    always @ (posedge clk or posedge rst)
+    begin
+        if (rst)
+            lap_active <= 1'b0;
+        else if (lap_press)
+            lap_active <= 1'b1;
+        else if (start_repress)
+            lap_active <= 1'b0;
+    end
+
     always @ (posedge clk)
     begin
         // Check if lap_press is high, and the start has not been repressed
-        if(lap_press && !start_repress)
+        if(lap_active && !start_repress)
             // Display and hold the current time
             begin
                 case(digit_select)
