@@ -1,5 +1,5 @@
 module time_counter_1dig(
-    input en, clk, rst, clr, dir, lap_press, // Input ports for the direction
+    input en, clk, clk100MHz, rst, clr, dir, lap_press, // Input ports for the direction
                                             // enable, clock, reset and the lap functionality
     input [3:0] max_val, // Maximum value to control the value the count can reach
     output reg[3:0] ct, lap_ct, // Variables for the running count and the lap-static count
@@ -19,7 +19,7 @@ module time_counter_1dig(
 
     // Always block to control the functionality of the lap
     reg lap_press_prev;
-    always @ (posedge clk or posedge rst)
+    always @ (posedge clk100MHz or posedge rst)
     begin
         if(rst)
         begin
