@@ -29,7 +29,7 @@ module time_counter_1dig(
         else
         begin
             lap_press_prev <= lap_press;
-            if (lap_press && !lap_press_prev)
+            if (lap_press && !lap_press_prev && dir)
                 lap_ct <= ct;
         end
     end
