@@ -37,7 +37,7 @@ module stopwatch(
     );
 
     // Initializng the multiplexer
-    mux m(
+    displayDriver driver(
         .A(mins),
         .B(secs_msd),
         .C(secs_lsd),
@@ -47,20 +47,14 @@ module stopwatch(
         .G(lap_ct_seconds_lsd),
         .H(lap_ct_ms),
         .clk(clk),
-        .segmentNum(segNum),
         .an(an),
         .lap_press(lap_press_ms),
         .start_press(start_press),
         .rst(rst),
-        .run(run)
+        .run(run),
+        .seg(seg)
     );
 
-    // Initializing the decoder connected to the multiplexer
-    sevenseghexdecoder segOut(
-        .BinVal(segNum),
-        .seg(seg_out)
-    );
-    
     // Turning our segment output into a raw output
     assign seg = seg_out;
    
