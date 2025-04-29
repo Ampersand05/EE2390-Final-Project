@@ -1,0 +1,5 @@
+- Only change direction while stopped
+- When count hits zero the display should flash on and off
+    - in addition, the counter should roll over and stop at zero
+    - pressing stop or start halts the flashing
+- Lap can only be asserted when counting upwards
