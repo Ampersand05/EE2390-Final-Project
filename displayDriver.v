@@ -4,7 +4,7 @@ module displayDriver(
     input [3:0] E, F, G, H, // Inputs for the captured lap time
     input clk, rst, start_press, run, lap_press, // Inputs for the clock, reset, lap button press, and the start press
     output reg [3:0] an, // This is the value of the display to be turned on
-    output reg [6:0] seg
+    output reg [0:6] seg
 );
     reg [3:0] segmentNum;
     reg [15:0] divider;
