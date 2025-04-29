@@ -3,3 +3,4 @@
     - in addition, the counter should roll over and stop at zero
     - pressing stop or start halts the flashing
 - Lap can only be asserted when counting upwards
+    - Just need to alter multiplexer/decoder logic
