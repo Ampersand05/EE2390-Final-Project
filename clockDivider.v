@@ -3,7 +3,7 @@ module clock_divider_1ms(
     input reset,
     output reg tick_1ms
 );
-    reg [23:0] count;
+    reg [16:0] count;
 
     parameter CLK_FREQ = 100_000_000;
     localparam COUNT_MAX = CLK_FREQ / 1000 - 1;
@@ -17,7 +17,7 @@ module clock_divider_1ms(
         end
         else
         begin
-            if(count == 24'd99999)
+            if(count == 17'd99999)
             begin
                 count <= 0;
                 tick_1ms <= 1;
