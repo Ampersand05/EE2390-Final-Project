@@ -58,6 +58,14 @@ module stopwatch_top(
         end
     end
     
+    // Only switch direction when stopped
+    reg dir_active;
+    always @ (posedge clk)
+        // run is 0 when stopped, so this will only allow dir_active to be assigned the value of dir when stopped
+        // We can pass dir_active into the counter modules below instead of dir
+        if(!run)
+            dir_active <= dir;
+
     // Previous direction logic
     reg dir_prev;
     always @ (posedge clk)
@@ -99,7 +107,7 @@ module stopwatch_top(
         .rst(rst),
         .clk(tick_1ms),
         .clk100MHz(clk),
-        .dir(dir),
+        .dir(dir_active),
         .clr(clr),
         .ct(ms_msd),
         .bken(bken1),
@@ -114,7 +122,7 @@ module stopwatch_top(
         .rst(rst),
         .clk(tick_1ms),
         .clk100MHz(clk),
-        .dir(dir),
+        .dir(dir_active),
         .clr(clr),
         .ct(seconds_lsd),
         .bken(bken2),
@@ -129,7 +137,7 @@ module stopwatch_top(
         .rst(rst),
         .clk(tick_1ms),
         .clk100MHz(clk),
-        .dir(dir),
+        .dir(dir_active),
         .clr(clr),
         .ct(seconds_msd),
         .bken(bken3),
@@ -144,7 +152,7 @@ module stopwatch_top(
         .rst(rst),
         .clk(tick_1ms),
         .clk100MHz(clk),
-        .dir(dir),
+        .dir(dir_active),
         .clr(clr),
         .ct(minutes),
         .bken(bken4),
