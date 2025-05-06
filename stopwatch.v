@@ -1,19 +1,15 @@
 module stopwatch(
-    input rst, clk, dir, clr, start, stop, lap, // Our basic outputs from the design specs
-    output [3:0] an, // This is the anode signal driver from the multiplexer
-    output[0:6] seg // This is our output segment that is in sync with the anode select
+    input rst, clk, dir, clr, start, stop, lap, TimeSet,
+    output [3:0] an,
+    output [0:6] seg
 );
-    // These are our wires to connect the outputs from the counters
     wire [3:0] mins, secs_lsd, secs_msd, ms;
     wire [3:0] lap_ct_minutes, lap_ct_seconds_lsd, lap_ct_seconds_msd, lap_ct_ms;
     wire [0:6] seg_out;
-
-    wire start_press, lap_press_ms; // This is a wire used to connect the stopwatch and the mux
-
+    wire start_press, lap_press_ms;
     wire run;
-
     wire flash;
-    
+
     // Initializing the stopwatch top module
     stopwatch_top uut (
         .rst(rst),
@@ -34,10 +30,11 @@ module stopwatch(
         .start_catch(start_press),
         .run_catch(run),
         .lap_press_ms_out(lap_press_ms),
-        .flash(flash)
+        .flash(flash),
+        .TimeSet(TimeSet)
     );
 
-    // Initializng the multiplexer
+    // Initializing the multiplexer
     displayDriver driver(
         .A(mins),
         .B(secs_msd),
@@ -58,7 +55,6 @@ module stopwatch(
         .dir(dir)
     );
 
-    // Turning our segment output into a raw output
     assign seg = seg_out;
-   
+
 endmodule
