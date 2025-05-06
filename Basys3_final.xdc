@@ -45,8 +45,10 @@ set_property PACKAGE_PIN V16 [get_ports dir]
 	#set_property IOSTANDARD LVCMOS33 [get_ports {sw[13]}]
 #set_property PACKAGE_PIN T1 [get_ports {sw[14]}]					
 	#set_property IOSTANDARD LVCMOS33 [get_ports {sw[14]}]
-#set_property PACKAGE_PIN R2 [get_ports {sw[15]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {sw[15]}]
+
+	// This switch is used for contorlling the TimeSet mode
+set_property PACKAGE_PIN R2 [get_ports TimeSet]					
+	set_property IOSTANDARD LVCMOS33 [get_ports TimeSet]
  
 
 ## LEDs  JCH Provide initial Y output on rightmost LED

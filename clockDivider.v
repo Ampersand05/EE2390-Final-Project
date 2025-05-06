@@ -1,6 +1,7 @@
 module clock_divider_1ms(
     input clk,
     input reset,
+    input [23:0] count_rate,
     output reg tick_1ms
 );
     reg [23:0] count;
@@ -17,7 +18,7 @@ module clock_divider_1ms(
         end
         else
         begin
-            if(count == 24'd9999999)
+            if(count == count_rate)
             begin
                 count <= 0;
                 tick_1ms <= 1;

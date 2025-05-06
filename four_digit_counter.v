@@ -1,5 +1,5 @@
 module stopwatch_top(
-    input rst, clk, dir, clr, start, stop, lap, // Similar inputs to the other modules
+    input rst, clk, dir, clr, start, stop, lap, TimeSet, // Similar inputs to the other modules
     output run_catch, start_catch, lap_press_ms_out,
     output [3:0] minutes, // Current minutes
     output [3:0] seconds_msd, // Current seconds most significant digits
@@ -28,7 +28,8 @@ module stopwatch_top(
         begin
             flash <= 1'b0;
         end
-        else if (run && at_min && !dir)
+        // Will only flash if !timeset_active, since otherwise it should wrap around
+        else if (run && at_min && !dir && !timeset_active)
         begin
             flash <= 1'b1;
         end
@@ -36,6 +37,8 @@ module stopwatch_top(
 
     // Run control
     reg run, kill;
+    // Register to control the speed of counting for TimeSet mode
+    reg [23:0] count_rate;
     always@(posedge clk or posedge rst or posedge clr)
     begin
         if(rst || clr)
@@ -45,6 +48,12 @@ module stopwatch_top(
         end
         else
         begin
+            // Makes the counting happen quicker when setting time and regular when not setting time
+            if(timeset_active)
+                count_rate <= 24'd99999
+            else
+                count_rate <= 24'd9999999
+
             if (start_press)
             begin
                 run <= 1'b1;
@@ -73,12 +82,21 @@ module stopwatch_top(
     end
     
     // Only switch direction when stopped
+    // Also only changes to TimeSet mode when stopped
     reg dir_active;
+    reg timeset_active;
     always @ (posedge clk)
         // run is 0 when stopped, so this will only allow dir_active to be assigned the value of dir when stopped
         // We can pass dir_active into the counter modules below instead of dir
         if(!run)
             dir_active <= dir;
+            timeset_active <= TimeSet;
+
+    // Turns TimeSet mode off anytime the TimeSet switch is turned off
+    // If this happens simultaneously while setting the time, the stopwatch will continue counting, but slowed down to regular time
+    // If this happens while stopped, the stopwatch will return to the stopped state
+    always @ (negedge TimeSet)
+        timeset_active <= TimeSet;
 
     // Previous direction logic
     reg dir_prev;
@@ -118,7 +136,8 @@ module stopwatch_top(
     clock_divider_1ms div1(
         .clk(clk),
         .reset(rst),
-        .tick_1ms(tick_1ms)
+        .tick_1ms(tick_1ms),
+        .count_rate(count_rate)
     );
     // Millisecond Counter
     time_counter_1dig ms_counter(

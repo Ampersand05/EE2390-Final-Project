@@ -1,5 +1,5 @@
 module stopwatch(
-    input rst, clk, dir, clr, start, stop, lap, // Our basic outputs from the design specs
+    input rst, clk, dir, clr, start, stop, lap, TimeSet, // Our basic outputs from the design specs
     output [3:0] an, // This is the anode signal driver from the multiplexer
     output[0:6] seg // This is our output segment that is in sync with the anode select
 );
@@ -36,7 +36,8 @@ module stopwatch(
         .start_catch(start_press),
         .run_catch(run),
         .lap_press_ms_out(lap_press_ms),
-        .flash(flash)
+        .flash(flash),
+        .TimeSet(TimeSet)
     );
 
     // Initializng the multiplexer
