@@ -2,7 +2,7 @@
 module displayDriver(
     input [3:0] A, B, C, D, // Inputs for the current counter state ie. the running time
     input [3:0] E, F, G, H, // Inputs for the captured lap time
-    input clk, rst, start_press, run, lap_press, // Inputs for the clock, reset, lap button press, and the start press
+    input clk, rst, start_press, run, lap_press, flash, // Inputs for the clock, reset, lap button press, and the start press
     output reg [3:0] an, // This is the value of the display to be turned on
     output reg [0:6] seg
 );
@@ -10,6 +10,8 @@ module displayDriver(
     reg [15:0] divider;
     reg [1:0] digit_select;
     reg lap_active; 
+    reg flash_toggle;
+    reg [24:0] flash_counter;
 
     wire start_repress = run && start_press;
 
@@ -20,12 +22,21 @@ module displayDriver(
         begin
             divider <= 16'b0;
             digit_select <= 2'b00;
+            flash_counter <= 25'b0;
+            flash_toggle <= 1'b0;
         end
         else
         begin
             divider <= divider + 1;
             if(divider == 0)
                 digit_select <= digit_select + 1;
+            
+            flash_counter <= flash_counter + 1;
+            if(flash_counter == 25'd50_000_000)
+            begin
+                flash_counter <= 25'b0;
+                flash_toggle <= ~flash_toggle;
+            end
         end
     end
 
@@ -34,7 +45,7 @@ module displayDriver(
     begin
         if (rst)
             lap_active <= 1'b0;
-        else if (lap_press)
+        else if (lap_press && dir)
             lap_active <= 1'b1;
         else if (start_repress)
             lap_active <= 1'b0;
@@ -43,6 +54,10 @@ module displayDriver(
     // Anode and digit select controller
     always @ (posedge clk)
     begin
+        if(flash && flash_toggle)
+        begin
+            an <= 4'b1111;
+        end
         if(lap_active && !start_repress)
             begin
                 case(digit_select)
@@ -82,4 +97,3 @@ module displayDriver(
     end
 
 endmodule
-

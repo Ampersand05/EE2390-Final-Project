@@ -20,6 +20,20 @@ module stopwatch_top(
     wire stop_press = stop_sync[0] & ~stop_sync[1];
     wire lap_press_ms = lap_sync_ms[0] & ~lap_sync_ms[1];
 
+    // New flashing display control
+    reg flash;
+    always @(posedge clk or posedge rst or posedge clr)
+    begin
+        if (rst || clr || start_press || stop_press)
+        begin
+            flash <= 1'b0;
+        end
+        else if (run && at_min && !dir)
+        begin
+            flash <= 1'b1;
+        end
+    end
+
     // Run control
     reg run, kill;
     always@(posedge clk or posedge rst or posedge clr)
@@ -68,8 +82,13 @@ module stopwatch_top(
 
     // Previous direction logic
     reg dir_prev;
-    always @ (posedge clk)
-        dir_prev <= dir;
+    always @ (posedge clk or posedge rst)
+    begin
+        if(rst)
+            dir_prev <= dir;
+        else if(!run)
+            dir_prev <= dir;
+    end
 
     // Start/Stop press synchro
     always @ (posedge clk or posedge rst)
@@ -92,7 +111,7 @@ module stopwatch_top(
         if (rst) 
             lap_sync_ms <= 2'b00;
         else
-            lap_sync_ms <= {lap_sync_ms[0], lap};
+            lap_sync_ms <= {lap_sync_ms[0], lap && dir};
     end
 
     // Clock Divider instantiation
