@@ -189,6 +189,8 @@ module stopwatch_top(
     // Outputs to commmunicate with the Display Driver
     assign run_catch = run;
     assign start_catch = start_press;
-    assign lap_press_ms_out = lap_press_ms;
+    // By adding & dir_active, the current values will still be saved every time lap is pressed, but the display
+    // will not recognize that lap has been pressed unless the direction is going up
+    assign lap_press_ms_out = lap_press_ms & dir_active;
 
 endmodule
