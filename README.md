@@ -1,6 +1,8 @@
 # EE2390-Final-Project
 State Machine Design for a Stopwatch
 
+The file, EE2390_Final_Project_Requirements, details the specific features of the stopwatch design
+
 ### TimeSet mode
 - Use sw15 to enter TimeSet mode from the stopped state
 - When in TimeSet mode, press start to begin rapidly counting in the direction of dir_active
